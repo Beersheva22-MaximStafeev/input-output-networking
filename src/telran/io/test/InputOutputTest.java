@@ -12,7 +12,6 @@ public class InputOutputTest {
 	String fileName = "myFile";
 	String directoryName = "myDir1/myDir2";
 	
-	
 	@BeforeEach
 	void setUp() throws Exception {
 		new File(fileName).delete();
