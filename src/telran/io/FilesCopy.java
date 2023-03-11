@@ -20,6 +20,7 @@ public class FilesCopy extends Copy {
 			Files.copy(Path.of(getSrcFilePath()), Path.of(getDestFilePath()), StandardCopyOption.REPLACE_EXISTING);
 			res = Files.size(Path.of(getDestFilePath()));
 		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
 		}
 		return res;
 	}

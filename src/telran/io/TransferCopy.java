@@ -21,8 +21,8 @@ public class TransferCopy extends Copy {
 		long res = 0;
 		try (InputStream input = new FileInputStream(getSrcFilePath());
 				OutputStream output = new FileOutputStream(getDestFilePath(), false)) {
-			res = input.available();
-			input.transferTo(output);
+//			res = input.available();
+			res = input.transferTo(output);
 		}
 		return res;
 	}
