@@ -84,11 +84,8 @@ public class InputOutputTest {
 		String attributes = dir.isDirectory() ? "dir" : "file";
 		printOneNode(name, attributes, level);
 		if ((maxLevel < 1 || level < maxLevel) && dir.isDirectory()) {
-			String[] dirList = dir.list();
-			if (dirList != null) {
-				for (String node: dirList) {
-					printDirectoryFile(new File(dir.getAbsolutePath() + File.separator + node), maxLevel, level + 1);
-				}
+			for (File node: dir.listFiles()) {
+				printDirectoryFile(node, maxLevel, level + 1);
 			}
 		}
 	}

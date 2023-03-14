@@ -18,14 +18,16 @@ public class Logger {
 	}
 	
 	private void postMessage(Level level, String message) {
-		ZonedDateTime timestamp = ZonedDateTime.now();
-		handler.publish(new LoggerRecord(
-				timestamp.toInstant(), 
-				timestamp.getZone().toString(), 
-				level, 
-				name, 
-				message
-		));
+		if (level.compareTo(this.level) >= 0) {
+			ZonedDateTime timestamp = ZonedDateTime.now();
+			handler.publish(new LoggerRecord(
+					timestamp.toInstant(), 
+					timestamp.getZone().toString(), 
+					level, 
+					name, 
+					message
+			));
+		}
 	}
 	
 	public void error(String message) {
