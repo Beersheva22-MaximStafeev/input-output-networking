@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface Company extends Iterable<Employee>, Serializable {
-	
 	/**
 	 * adds employee to Company
 	 * @param employee
