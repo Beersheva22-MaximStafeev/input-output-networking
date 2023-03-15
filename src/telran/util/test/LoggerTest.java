@@ -14,6 +14,7 @@ public class LoggerTest {
 	void loggerTest() {	
 		LOG.debug("this is a debug message");
 		try {
+			@SuppressWarnings("unused")
 			int a = 10 / 0;
 		} catch (Exception e) {
 			LOG.error("some big trouble happends: " + e.getMessage() + ", " + Arrays.deepToString(e.getStackTrace()));
