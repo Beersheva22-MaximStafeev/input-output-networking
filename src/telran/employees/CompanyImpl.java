@@ -12,7 +12,8 @@ public class CompanyImpl implements Company {
 	
 	private HashMap<Long, Employee> map = new HashMap<>();
 	// indexes
-	private LinkedHashSet<Employee> iterator; 
+//	private LinkedHashSet<Employee> iterator;
+	// this iterator is bad,because we can change something outside our class 
 	private HashMap<Integer, HashSet<Employee>> indexMonth;
 	private TreeMap<Integer, HashSet<Employee>> indexSalary;
 	private HashMap<String, HashSet<Employee>> indexDepartment;
@@ -23,7 +24,7 @@ public class CompanyImpl implements Company {
 	
 	@Override
 	public Iterator<Employee> iterator() {
-		return iterator.iterator();
+		return getAllEmployees().iterator();
 	}
 
 	@Override
@@ -37,7 +38,7 @@ public class CompanyImpl implements Company {
 
 	private void addToIndexes(Employee employee) {
 		// TO_DO Fill all indexes here
-		iterator.add(employee);
+//		iterator.add(employee);
 		
 		int month = employee.getBirthDate().getMonthValue();
 		indexMonth.computeIfAbsent(month, k -> new HashSet<>()).add(employee);
@@ -49,7 +50,7 @@ public class CompanyImpl implements Company {
 
 	private void removeFromIndexes(Employee employee) {
 		// TO_DO Fill all indexes here
-		iterator.remove(employee);
+//		iterator.remove(employee);
 
 		int month = employee.getBirthDate().getMonthValue();
 		indexMonth.get(month).remove(employee);
@@ -66,7 +67,7 @@ public class CompanyImpl implements Company {
 	}
 
 	private void flushIndexes() {
-		iterator = new LinkedHashSet<>(); 
+//		iterator = new LinkedHashSet<>();
 		indexMonth = new HashMap<>();
 		indexSalary = new TreeMap<>();
 		indexDepartment = new HashMap<>(); 
@@ -83,7 +84,9 @@ public class CompanyImpl implements Company {
 
 	@Override
 	public List<Employee> getAllEmployees() {
-		return iterator.stream().toList();
+//		return iterator.stream().toList();
+		return map.values().stream().toList();
+//		return new ArrayList<>(map.values());
 	}
 
 	@Override
@@ -94,7 +97,7 @@ public class CompanyImpl implements Company {
 	@Override
 	public List<Employee> getEmployeesBySalary(int salaryFrom, int salaryTo) {
 		return indexSalary.subMap(salaryFrom, true, salaryTo, true).values().stream()
-				.flatMap(el -> el.stream())
+				.flatMap(el -> el.stream()) //flatMap(Set::stream) 
 				.toList();
 	}
 
