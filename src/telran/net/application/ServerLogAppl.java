@@ -1,13 +1,15 @@
 package telran.net.application;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
 import java.net.*;
+import java.util.HashMap;
 
-public class ServerTcpExampleAppl {
-	
+import telran.util.*;
+
+public class ServerLogAppl {
+
 	private static final int PORT = 4000;
+	private static HashMap <Level, Integer> map = new HashMap<>();
 
 	public static void main(String[] args) throws Exception {
 		
@@ -21,10 +23,16 @@ public class ServerTcpExampleAppl {
 	}
 
 	private static void runServerClient(Socket socket) throws Exception {
+		System.out.println("Client connected: " + socket.getRemoteSocketAddress());
 		BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		PrintStream writer = new PrintStream(socket.getOutputStream());
 		while (true) {
-			String request = reader.readLine();
+			String request;
+			try {
+				request = reader.readLine();
+			} catch (Exception e) {
+				break;
+			}
 			if (request == null) {
 				break;
 			}
@@ -38,13 +46,32 @@ public class ServerTcpExampleAppl {
 		String res = "Wrong request";
 		String[] tokens = request.split("#");
 		if (tokens.length == 2) {
-			res = switch (tokens[0]) {
-				case "reverse" -> new StringBuilder(tokens[1]).reverse().toString();
-				case "length" -> Integer.toString(tokens[1].length());
+			res = switch (tokens[0].toLowerCase()) {
+				case "log" -> postLog(tokens[1]);
+				case "counter" -> getCounter(tokens[1]);
 				default -> "Wrong type " + tokens[0];
 				
 			};
 		}	
 		return res;
 	}
+
+	private static String getCounter(String levelStr) {
+		Level level = Level.valueOf(levelStr.toUpperCase());
+		return level == null ? "ERROR" : map.getOrDefault(level, 0).toString();
+	}
+
+	private static String postLog(String logMessage) {
+		int index = logMessage.indexOf(":");
+		String result = "ERROR";
+		if (index > -1) {
+			Level level = Level.valueOf(logMessage.substring(0, index).toUpperCase());
+			if (level != null) {
+				map.merge(level, 1, Integer::sum);
+				result = "OK";
+			}
+		}
+		return result;
+	}
+
 }

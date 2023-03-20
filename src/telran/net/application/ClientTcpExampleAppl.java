@@ -31,6 +31,7 @@ public class ClientTcpExampleAppl {
 			}
 			System.out.println(response);
 		}
+		scanner.close();
 		socket.close();
 	}
 }
