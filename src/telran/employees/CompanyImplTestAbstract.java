@@ -7,17 +7,19 @@ import org.junit.jupiter.api.*;
 import java.time.LocalDate;
 import java.util.*;
 
-class CompanyImplTest {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public abstract class CompanyImplTestAbstract {
+	private static final int STRESS_EMPLOYEES_COUNT = 1_000_000;
 	private static final String COMPANY_DATA_FILE_NAME = "company.data";
 	private static final int MIN_SALARY = 100;
 	private static final int MAX_SALARY = 10_000;
-	Company company;
+	static Company company;
 	List<Employee> empl;
 	String[] departments = new String[]{"depart1", "depart2", "depart3", "depart4", "depart5", "depart6", "depart7", "depart8", "depart9", "depart10", "depart11", "depart12", "depart13", "depart14"};
 	
 	@BeforeEach
 	void setUpEach() {
-		company = new CompanyImpl();
+		company.getAllEmployees().forEach(el -> company.removeEmployee(el.getId()));
 		empl = new ArrayList<>();
 		empl.add(new Employee(1, "Alex", LocalDate.of(2000, 1, 1), "depart1", 100));
 		empl.add(new Employee(2, "Alex", LocalDate.of(2000, 2, 2), "depart2", 101));
@@ -174,8 +176,13 @@ class CompanyImplTest {
 	}
 	
 	@Test
+	@Disabled
 	void stressTest() {
 		/*
+		 * local times
+		 * 		when STRESS_EMPLOYEES_COUNT == 1_000_000
+		 * 		and MIN_SALARY = 100;
+		 * 		and MAX_SALARY = 10_000;
 		 * Add simple takes   : 423 ms
 		 * Add good takes     : 2 643 ms
 		 * Filter simple takes: 125 158 ms
@@ -206,7 +213,7 @@ class CompanyImplTest {
 		empl.add(new Employee(4, "Catrine", LocalDate.of(2000, 4, 4), "depart2", 103));
 		empl.add(new Employee(5, "Dina", LocalDate.of(2000, 1, 5), "depart3", 104));
 		empl.add(new Employee(6, "Evgen", LocalDate.of(2000, 2, 6), "depart3", 101));
-		for (int i = 10; i < 1_000_000; i++) {
+		for (int i = 10; i < STRESS_EMPLOYEES_COUNT; i++) {
 			empl.add(getRandomEmpl(i));
 		}
 		for (Employee e: empl) {

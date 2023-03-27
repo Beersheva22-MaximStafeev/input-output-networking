@@ -13,6 +13,24 @@ public class Employee implements Serializable {
 	private String department;
 	private int salary;
 	
+	@Override
+	public boolean equals(Object obj) {
+		return id == ((Employee)obj).id && 
+				salary == ((Employee)obj).salary && 
+				name.equals(((Employee)obj).name) && 
+				birthDate.equals(((Employee)obj).birthDate) && 
+				department.equals(((Employee)obj).department); 
+	}
+	
+	@Override
+	public int hashCode() {
+		return (int) (id % 1000) + 
+				salary % 1000 * 1000 + 
+				name.hashCode() % 700 * 1_000_000 + 
+				birthDate.hashCode() % 700 * 1_000_000  + 
+				department.hashCode() % 700 * 1_000_000;
+	}
+	
 	public Employee(long id, String name, LocalDate birthDate, String department, int salary) {
 		this.id = id;
 		this.name = name;

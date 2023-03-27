@@ -11,7 +11,7 @@ public class TcpClient implements NetworkClient {
 	private ObjectInputStream input;
 
 	public TcpClient(String hostname, int port) throws Exception {
-		// TODO Auto-generated constructor stub
+		// TO DO Auto-generated constructor stub
 		socket = new Socket(hostname, port);
 		output = new ObjectOutputStream(socket.getOutputStream());
 		input = new ObjectInputStream(socket.getInputStream());
@@ -20,7 +20,6 @@ public class TcpClient implements NetworkClient {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T send(String requestType, Serializable obj) {
-		T result = null;
 		Request request = new Request(requestType, obj);
 		Response response = null;
 		try {
@@ -29,12 +28,10 @@ public class TcpClient implements NetworkClient {
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}
-		if (response.code == ResponseCode.OK) {
-			result = (T) response.data;
-		} else {
+		if (response.code != ResponseCode.OK) {
 			throw new RuntimeException("Error with request. Response code: " + response.code);
 		}
-		return result;
+		return (T) response.data;
 	}
 	
 	@Override

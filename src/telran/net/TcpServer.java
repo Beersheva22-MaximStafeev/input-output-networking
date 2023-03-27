@@ -10,7 +10,7 @@ public class TcpServer implements Runnable {
 	private ServerSocket serverSocket;
 	
 	public TcpServer(Protocol protocol, int port) throws IOException {
-		// TODO Auto-generated constructor stub
+		// TO DO Auto-generated constructor stub
 		this.protocol = protocol;
 		this.port = port;
 		serverSocket = new ServerSocket(port);
