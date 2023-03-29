@@ -1,6 +1,7 @@
 package telran.view;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -32,7 +33,7 @@ public interface InputOutput {
 	default String readStringPredicate(String prompt, String errorPrompt, Predicate<String> predicate) {
 		Function<String, String> f = el -> {
 			if (!predicate.test(el))
-				throw new RuntimeException();
+				throw new RuntimeException("String doesn't corresponds to predicate");
 			return el;
 		};
 		return readObject(prompt, errorPrompt, f);
@@ -50,7 +51,7 @@ public interface InputOutput {
 		Function<String, Integer> f = el -> {
 			int res = Integer.parseInt(el); 
 			if (res < min || res > max) 
-				throw new RuntimeException(); 
+				throw new RuntimeException(String.format("Number must be in range [%s..%s]", min, max)); 
 			return res;
 		};
 		return readObject(prompt, errorPrompt, f);
@@ -64,7 +65,7 @@ public interface InputOutput {
 		return readObject(prompt, errorPrompt, el -> {
 			long res = Integer.parseInt(el);
 			if (res < min || res > max)
-				throw new RuntimeException();
+				throw new RuntimeException(String.format("Number must be in range [%s..%s]", min, max));
 			return res;
 		});
 	}
@@ -75,12 +76,30 @@ public interface InputOutput {
 
 	default LocalDate readDate(String prompt, String errorPrompt, String format, LocalDate min, LocalDate max) {
 		return readObject(prompt, errorPrompt, el -> {
-			LocalDate res = LocalDate.parse(el);
+			LocalDate res = LocalDate.parse(el, DateTimeFormatter.ofPattern(format));
 			if (res.isBefore(min) || res.isAfter(max))
-				throw new RuntimeException();
+				throw new RuntimeException(String.format("Date must be in range [%s..%s]", min, max));
 			return res;
 		});
 	}
+	
+	default <T extends Comparable<T>> T getAndCheck(String input, Function<String, T> fn, T min, T max) {
+		T res = fn.apply(input);
+		checkRange(res, min, max);
+		return res;
+	}
+	
+	default <T extends Comparable<T>> void checkRange(T res, T min, T max) {
+		if (res.compareTo(min) < 0 || res.compareTo(max) > 0) {
+			throw new RuntimeException("value must be in range [" + min + ".." + max + "]");
+		}
+	}
+	
+//	default <T> void check(Comparable<T> res, T min, T max) {
+//		  if (res.compareTo(min) < 0 || res.compareTo(max) > 0) {
+//		    throw new IllegalArgumentException();
+//		  }
+//		}
 
 	default double readNumber(String prompt, String errorPrompt) {
 		return readObject(prompt, errorPrompt, Double::parseDouble);
@@ -90,8 +109,16 @@ public interface InputOutput {
 		return readObject(prompt, errorPrompt, el -> {
 			double res = Double.parseDouble(el);
 			if (res < min || res > max)
-				throw new RuntimeException();
+				throw new RuntimeException(String.format("Number must be in range [%s..%s]", min, max));
 			return res;
 		});
+	}
+	
+	default double readNumberDouble(String prompt, String errorPrompt, double min, double max) {
+		return readObject(prompt, errorPrompt, el -> getAndCheck(el, el1 -> Double.parseDouble(el1), min, max));
+	}
+
+	default LocalDate readDateNew(String prompt, String errorPrompt, String format, LocalDate min, LocalDate max) {
+		return (LocalDate) readObject(prompt, errorPrompt, el -> getAndCheck(el, el1 -> LocalDate.parse(el1, DateTimeFormatter.ofPattern(format)), min, max));
 	}
 }
