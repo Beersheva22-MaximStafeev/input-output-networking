@@ -9,6 +9,7 @@ public class Calculator {
 	
 	public static void main(String[] args) {
 		createMenu().perform(io);
+		io.writeLine("Thanks & Goodbye");
 	}
 
 	private static Menu createMenu() {
