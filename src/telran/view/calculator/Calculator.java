@@ -32,9 +32,9 @@ public class Calculator {
 		LocalDate date = io.readDateISO("Enter date", "Enter correct date");
 		int days = io.readInt(String.format("Enter days to %s", operation), "Enter correct number");
 		try {
-			io.writeLine(String.format("Date: %s, %s %s day(s), resulting: %s", date, operation, days, function.apply(date, days)));
+			io.writeLine(String.format("Date: %s, %s %s day(s), result: %s", date, operation, days, function.apply(date, days)));
 		} catch (Exception e) {
-			io.writeLine(String.format("Error while procession %s %s day(s) with date %s", operation, days, date));
+			io.writeLine(String.format("Error while processing %s %s day(s) with date %s", operation, days, date));
 		}
 	}
 	
@@ -42,9 +42,9 @@ public class Calculator {
 		double a = io.readNumber("Enter first number", "Enter correct double");
 		double b = io.readNumber("Enter second number", "Enter correct double");
 		try {
-			io.writeLine(String.format("Result of %s %s %s = %s", a, sign, b, function.apply(a, b)));
+			io.writeLine(String.format("%s %s %s = %s", a, sign, b, function.apply(a, b)));
 		} catch (Exception e) {
-			io.writeLine(String.format("Error processing  %s%s%s", a, sign, b));
+			io.writeLine(String.format("Error processing  %s %s %s", a, sign, b));
 		}
 	}
 }
