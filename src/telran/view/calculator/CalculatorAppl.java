@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.function.BiFunction;
 import telran.view.*;
 
-public class Calculator {
+public class CalculatorAppl {
 	
 	public static void main(String[] args) {
 		InputOutput io = new StandartInputOutput();
