@@ -1,8 +1,13 @@
-package telran.employees;
+package telran.employees.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
+
+import telran.employees.Company;
+import telran.employees.CompanyImpl;
+import telran.employees.CompanyImplSimple;
+import telran.employees.Employee;
 
 import java.time.LocalDate;
 import java.util.*;

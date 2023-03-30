@@ -1,8 +1,10 @@
-package telran.employees;
+package telran.employees.net.app;
 
 import java.util.Iterator;
 import java.util.List;
 
+import telran.employees.Company;
+import telran.employees.Employee;
 import telran.net.NetworkClient;
 
 public abstract class CompanyNetImplAbstract implements Company {

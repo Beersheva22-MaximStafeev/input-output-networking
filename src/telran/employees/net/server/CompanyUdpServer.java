@@ -1,4 +1,4 @@
-package telran.net.application;
+package telran.employees.net.server;
 
 import java.io.IOException;
 

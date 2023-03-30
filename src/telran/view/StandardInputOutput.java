@@ -5,7 +5,7 @@ package telran.view;
 //import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-public class StandartInputOutput implements InputOutput {
+public class StandardInputOutput implements InputOutput {
 	Scanner scanner = new Scanner(System.in);
 
 	@Override

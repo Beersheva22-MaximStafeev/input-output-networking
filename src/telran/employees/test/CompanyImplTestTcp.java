@@ -1,6 +1,8 @@
-package telran.employees;
+package telran.employees.test;
 
 import org.junit.jupiter.api.*;
+
+import telran.employees.net.app.CompanyNetImplTcp;
 
 public class CompanyImplTestTcp extends CompanyImplTestAbstract {
 	

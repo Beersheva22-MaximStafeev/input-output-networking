@@ -7,7 +7,7 @@ import telran.view.*;
 public class CalculatorAppl {
 	
 	public static void main(String[] args) {
-		InputOutput io = new StandartInputOutput();
+		InputOutput io = new StandardInputOutput();
 		createMenu().perform(io);
 	}
 

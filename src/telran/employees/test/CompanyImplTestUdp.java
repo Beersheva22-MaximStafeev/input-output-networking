@@ -1,6 +1,8 @@
-package telran.employees;
+package telran.employees.test;
 
 import org.junit.jupiter.api.*;
+
+import telran.employees.net.app.CompanyNetImplUdp;
 
 public class CompanyImplTestUdp extends CompanyImplTestAbstract {
 	private static final int PORT = 4000;

@@ -1,4 +1,4 @@
-package telran.employees;
+package telran.employees.net.app;
 
 import telran.net.UdpClient;
 
