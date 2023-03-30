@@ -14,15 +14,15 @@ public class CalculatorAppl {
 	private static Menu createMenu() {
 		return new Menu("Calculator", 
 				new Menu("Arithmetic operations",
-						Item.of("Add numbers", io -> processNumbers(io, "+", (a, b) -> a + b)),
+						Item.of("Add numbers",      io -> processNumbers(io, "+", (a, b) -> a + b)),
 						Item.of("Subtract numbers", io -> processNumbers(io, "-", (a, b) -> a - b)),
 						Item.of("Multiply numbers", io -> processNumbers(io, "*", (a, b) -> a * b)),
-						Item.of("Divide numbers", io -> processNumbers(io, "/", (a, b) -> a / b)),
+						Item.of("Divide numbers",   io -> processNumbers(io, "/", (a, b) -> a / b)),
 						Item.exit()
 						),
 				new Menu("Date operations",
-						Item.of("Add days", io -> processDates(io, "add", (a, b) -> a.plusDays(b))),
-						Item.of("Subtract days", io -> processDates(io, "substract", (a, b) -> a.minusDays(b))),
+						Item.of("Add days",         io -> processDates(io, "add",       LocalDate::plusDays)),
+						Item.of("Subtract days",    io -> processDates(io, "substract", LocalDate::minusDays)),
 						Item.exit()
 						),
 				Item.exit());
