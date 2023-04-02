@@ -24,10 +24,12 @@ public class TcpServer implements Runnable {
 		while (true) {
 			try {
 				Socket socket = serverSocket.accept();
+				System.out.println("Client connected");
 				TcpServerClient serverClient = new TcpServerClient(socket, protocol);
 				serverClient.run();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				System.out.println(e.toString());
+				System.out.println("Client disconnected");
 			}
 		}
 	}

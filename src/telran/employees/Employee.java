@@ -59,5 +59,9 @@ public class Employee implements Serializable {
 		return birthDate;
 	}
 	
+	@Override
+	public String toString() {
+		return String.format("Id: %s, Name: %s, BirthDate: %s, Department: %s, Salary: %s", getId(), getName(), getBirthDate(), getDepartment(), getSalary());
+	}
 	
 }
