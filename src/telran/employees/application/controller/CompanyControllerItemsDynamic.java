@@ -2,6 +2,7 @@ package telran.employees.application.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import telran.employees.Company;
 import telran.employees.Employee;
@@ -9,12 +10,14 @@ import telran.view.InputOutput;
 import telran.view.Item;
 import telran.view.Menu;
 
-public class CompanyControllerItems {
+public class CompanyControllerItemsDynamic {
 	
 	private Company company;
+	private String[] departments;
 	
-	public CompanyControllerItems(Company company) {
+	public CompanyControllerItemsDynamic(Company company, String[] departments) {
 		this.company = company;
+		this.departments = departments;
 	}
 	
 	public Item getUserItemMenu() {
@@ -44,41 +47,52 @@ public class CompanyControllerItems {
 		}
 	}
 	
-	private void printEmployes(InputOutput io, List<Employee> employees) {
-		io.writeLine(String.format("Find %s employee%s:", employees.size(), employees.size() == 1 ? "" : "s" ));
+	private void printEmployes(InputOutput io, List<Employee> employees, String filter) {
+		io.writeLine(String.format("Find %s employee%s %s:", employees.size(), employees.size() == 1 ? "" : "s", filter ));
 		employees.forEach(empl -> io.writeLine(empl.toString()));
 	}
 	
 	private void getAllEmployees(InputOutput io) {
-		printEmployes(io, company.getAllEmployees());
+		printEmployes(io, company.getAllEmployees(),"");
 	}
 	
 	private void getEmployeesByMonthBirth(InputOutput io) {
 		int month = io.readInt("Enter month of birth from 1 to 12", "Incorrect month", 1, 12);
-		printEmployes(io, company.getEmployeesByMonthBirth(month));		
+		printEmployes(io, company.getEmployeesByMonthBirth(month),"in month " + month + " of bithday");		
 	}
 	
 	private void getEmployeesBySalary(InputOutput io) {
 		int salaryFrom = io.readInt("Enter salaryFrom", "Incorrect salary");
 		int salaryTo = io.readInt("Enter salaryTo", "Incorrect salary");
-		printEmployes(io, company.getEmployeesBySalary(salaryFrom, salaryTo));
+		printEmployes(io, company.getEmployeesBySalary(salaryFrom, salaryTo), String.format("with salary from %s to %s", salaryFrom, salaryTo));
+	}
+	
+	private String readDepartment(InputOutput io) {
+		io.writeLine("Choose department from list:");
+		IntStream.range(0, departments.length).forEach(index -> io.writeLine(String.format("%s. %s", index + 1, departments[index])));
+		int depNo = io.readInt("Enter departnemt number", "Wrong department number", 1, departments.length);
+		return departments[depNo - 1];
 	}
 	
 	private void getEmployeesByDepartment(InputOutput io) {
-		String department = io.readString("Enter department name");
-		printEmployes(io, company.getEmployeesByDepartment(department));
+		String department = readDepartment(io);
+		printEmployes(io, company.getEmployeesByDepartment(department), "in department <" + department + ">");
 	}
 	
 	private void addEmployee(InputOutput io) {
 		int id = io.readInt("Enter id of Employee", "Wrong id");
-		String name = io.readString("Enter employee name");
-		LocalDate birthDate = io.readDateISO("Enter birthdate in format yyyy-mm-dd", "Enter correct date");
-		String department = io.readString("Enter department name");
-		int salary = io.readInt("Enter salary", "Incorrect salary");
-		if (company.addEmployee(new Employee(id, name, birthDate, department, salary))) {
-			io.writeLine("Employee added succesfully");
+		if (company.getEmployee(id) == null) {
+			String name = io.readString("Enter employee name");
+			LocalDate birthDate = io.readDateISO("Enter birthdate in format yyyy-mm-dd", "Enter correct date");
+			String department = readDepartment(io);
+			int salary = io.readInt("Enter salary", "Incorrect salary");
+			if (company.addEmployee(new Employee(id, name, birthDate, department, salary))) {
+				io.writeLine("Employee added succesfully");
+			} else {
+				io.writeLine(String.format("Employee with id=%s already exists", id));
+			}
 		} else {
-			io.writeLine(String.format("Employee with id=%s already exists", id));
+			io.writeLine(String.format("Employee with this id %s already exists", id));
 		}
 	}
 	
