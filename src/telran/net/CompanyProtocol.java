@@ -1,9 +1,12 @@
 package telran.net;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import telran.employees.*;
 
+@SuppressWarnings("unused")
 public class CompanyProtocol implements Protocol {
 	
 	Company company;
@@ -15,21 +18,13 @@ public class CompanyProtocol implements Protocol {
 	@Override
 	public Response getResponse(Request request) {
 		try {
-			return switch (request.type) {
-				case "iterator" -> new Response(ResponseCode.OK, iterator(request.data)); 
-				case "addEmployee" -> new Response(ResponseCode.OK, addEmployee(request.data)); 
-				case "removeEmployee" -> new Response(ResponseCode.OK, removeEmployee(request.data)); 
-				case "getAllEmployees" -> new Response(ResponseCode.OK, getAllEmployees(request.data)); 
-				case "getEmployeesByMonthBirth" -> new Response(ResponseCode.OK, getEmployeesByMonthBirth(request.data)); 
-				case "getEmployeesBySalary" -> new Response(ResponseCode.OK, getEmployeesBySalary(request.data)); 
-				case "getEmployeesByDepartment" -> new Response(ResponseCode.OK, getEmployeesByDepartment(request.data)); 
-				case "getEmployee" -> new Response(ResponseCode.OK, getEmployee(request.data)); 
-				case "save" -> new Response(ResponseCode.OK, save(request.data)); 
-				case "restore" -> new Response(ResponseCode.OK, restore(request.data)); 
-				default -> new Response(ResponseCode.WRONG_REQUEST, request.type + " wrong request");
-			};
+			Method method = CompanyProtocol.class.getDeclaredMethod(request.type, Serializable.class);
+			Serializable responseData = (Serializable) method.invoke(this, request.data);
+			return new Response(ResponseCode.OK, responseData);
+		} catch (NoSuchMethodException e) {
+			return new Response(ResponseCode.WRONG_REQUEST, request.type + " wrong request, error: " + e.toString());
 		} catch (Exception e) {
-			return new Response(ResponseCode.WRONG_DATA, null);
+			return new Response(ResponseCode.WRONG_DATA, e.getMessage());
 		}
 	}
 

@@ -29,7 +29,7 @@ public class TcpClient implements NetworkClient {
 			e.printStackTrace();
 		}
 		if (response.code != ResponseCode.OK) {
-			throw new RuntimeException("Error with request. Response code: " + response.code);
+			throw new RuntimeException("Error with request. Response code: " + response.code + ", response data: " + response.data);
 		}
 		return (T) response.data;
 	}

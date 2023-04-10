@@ -45,6 +45,7 @@ public class CompanyUniversalAppl {
 	}
 
 	private static void readConfig(String[] args) throws Exception {
+		// здесь по правильному мы должны проверить, что в файле присутствуют все 4 параметра и каждый из них заполнен
 		Properties properties = new Properties();
 		if (args.length != 1) {
 			System.out.println("Must be one argument with file name of configuration");
