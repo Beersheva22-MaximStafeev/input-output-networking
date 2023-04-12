@@ -108,5 +108,5 @@ public interface GitRepository extends Serializable {
 	 */
 	String addIgnoredFileNameExp(String regex);
 	String removeIgnoredFileNameExp(String regex);
-	String[] getAllIgnoredFileNameExp();
+	List<String> getAllIgnoredFileNameExp();
 }

@@ -42,7 +42,7 @@ public class GitRepositoryImpl implements GitRepository {
 	private static GitRepositoryImpl objectCreated;
 	
 	private Object head;
-	private Path homePath;
+	private String homePath;
 	private Set<String> ignoredFileNameExp;
 	private HashMap<String, Branch> branches;
 	private HashMap<String, Commit> commits;
@@ -65,19 +65,19 @@ public class GitRepositoryImpl implements GitRepository {
 		return objectCreated;
 	}
 	
-	private static void restoreGitObject(String homePath) {
-		try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(getGitStorageFileName(getAbsolutePath(homePath)).toString()))) {
+	private static void restoreGitObject(String ) {
+		try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(getGitStorageFileName(getAbsolutePath()).toString()))) {
 			objectCreated = (GitRepositoryImpl) input.readObject();
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
 	
-//	private static String saveGitObject(String homePath) {
+//	private static String saveGitObject(String ) {
 //		if (objectCreated == null) {
 //			return SAVE_GIT_NOT_INIT;
 //		}
-//		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(getGitStorageFileName(getAbsolutePath(homePath)).toString()))) {
+//		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(getGitStorageFileName(getAbsolutePath()).toString()))) {
 //			output.writeObject(objectCreated);
 //		} catch (Exception e) {
 //			return "Git not saved. ERROR: " + e.getMessage();
@@ -88,7 +88,7 @@ public class GitRepositoryImpl implements GitRepository {
 	private static void createNewGitObject(String homePath) {
 		objectCreated = new GitRepositoryImpl();
 		objectCreated.head = null;
-		objectCreated.homePath = getAbsolutePath(homePath);
+		objectCreated.homePath = getAbsolutePath(homePath).toString();
 		objectCreated.ignoredFileNameExp = new HashSet<>();
 		String res = objectCreated.addIgnoredFileNameExp(GIT_SAVE_NAME.replace(".", "\\."));
 		objectCreated.branches = new HashMap<>();
@@ -133,7 +133,7 @@ public class GitRepositoryImpl implements GitRepository {
 				return "Cannot commit outside a branch";
 			}
 			Map<FileStates, List<FileState>> differsMap = infoDiff();
-			if (differsMap.get(FileStates.UNTRACKED).size() == 0 && differsMap.get(FileStates.MODIFIED).size() == 0) {
+			if (differsMap.getOrDefault(FileStates.UNTRACKED, new LinkedList<>()).size() == 0 && differsMap.getOrDefault(FileStates.MODIFIED, new LinkedList<>()).size() == 0) {
 				return "Nothing to commit";
 			}
 			Commit commit = new Commit(getCommitFromHead(), commitMessage, info());
@@ -174,7 +174,7 @@ public class GitRepositoryImpl implements GitRepository {
 
 	private List<Path> getHomeDirectoryContent() {
 		try {
-			return Files.walk(homePath)
+			return Files.walk(Path.of(homePath))
 					.filter(path -> !Files.isDirectory(path))
 					.filter(path -> fileNotIgnored(path))
 					.toList();
@@ -237,7 +237,7 @@ public class GitRepositoryImpl implements GitRepository {
 		if (head != null) {
 			Commit current = getCommitFromHead(); 
 			while (current != null) {
-				res.add(new CommitMessage(current.getShortId(), current.getMessage()));
+				res.add(new CommitMessage(current.getId(), current.getMessage()));
 				current = current.getPrevious();
 			}
 		}
@@ -261,7 +261,7 @@ public class GitRepositoryImpl implements GitRepository {
 		if (commit != null) {
 			return commit.getContent().keySet().stream().toList();
 		} else {
-			return null;
+			return new LinkedList<>();
 		}
 		// TO DO GitRepositoryImpl : List<Path> commitContent(String commitName)
 	}
@@ -269,7 +269,7 @@ public class GitRepositoryImpl implements GitRepository {
 	@Override
 	public String switchTo(String name) {
 		HashMap<FileStates, List<FileState>> diff = infoDiff();
-		if (diff.get(FileStates.MODIFIED).size() != 0 || diff.get(FileStates.UNTRACKED).size() != 0) {
+		if (diff.getOrDefault(FileStates.MODIFIED, new LinkedList<>()).size() != 0 || diff.getOrDefault(FileStates.UNTRACKED, new LinkedList<>()).size() != 0) {
 			return "Switch can be made only after commit";
 		}
 		if (branches.containsKey(name)) {
@@ -296,7 +296,7 @@ public class GitRepositoryImpl implements GitRepository {
 		});
 		getCommitFromHead().getContent().keySet().forEach(path -> createIfAbsent(path));
 		// TO DO GitRepositoryImpl : public String switchTo(String name)
-		return null;
+		return "Switching finished successfully";
 	}
 
 	private Object createIfAbsent(Path path) {
@@ -319,7 +319,7 @@ public class GitRepositoryImpl implements GitRepository {
 
 	@Override
 	public void save() {
-		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(getGitStorageFileName(homePath).toString()))) {
+		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(getGitStorageFileName(Path.of(homePath)).toString()))) {
 			output.writeObject(this);
 		} catch (Exception e) {
 			throw new RuntimeException(SAVE_GIT_NOT_SAVED_ERROR + e.getMessage());
@@ -347,8 +347,8 @@ public class GitRepositoryImpl implements GitRepository {
 	}
 
 	@Override
-	public String[] getAllIgnoredFileNameExp() {
-		return ignoredFileNameExp.toArray(String[]::new);
+	public List<String> getAllIgnoredFileNameExp() {
+		return ignoredFileNameExp.stream().toList();
 	}
 
 }

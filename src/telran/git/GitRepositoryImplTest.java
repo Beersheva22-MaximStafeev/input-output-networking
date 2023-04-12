@@ -63,4 +63,12 @@ public class GitRepositoryImplTest {
 		List<String> list = new LinkedList<>();
 		list.stream().collect(Collectors.groupingBy(el -> el.length()));
 	}
+	
+	@Test
+	void initTest() {
+		String home = "C:\\TelRan\\myGitRepa";
+		GitRepositoryImpl git1 = GitRepositoryImpl.init(home);
+		GitRepositoryImpl git2 = GitRepositoryImpl.init(home);
+		assertEquals(git1, git2);
+	}
 }
