@@ -65,19 +65,19 @@ public class GitRepositoryImpl implements GitRepository {
 		return objectCreated;
 	}
 	
-	private static void restoreGitObject(String ) {
-		try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(getGitStorageFileName(getAbsolutePath()).toString()))) {
+	private static void restoreGitObject(String homePath) {
+		try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(getGitStorageFileName(getAbsolutePath(homePath)).toString()))) {
 			objectCreated = (GitRepositoryImpl) input.readObject();
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
 	
-//	private static String saveGitObject(String ) {
+//	private static String saveGitObject(String homePath) {
 //		if (objectCreated == null) {
 //			return SAVE_GIT_NOT_INIT;
 //		}
-//		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(getGitStorageFileName(getAbsolutePath()).toString()))) {
+//		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(getGitStorageFileName(getAbsolutePath(homePath)).toString()))) {
 //			output.writeObject(objectCreated);
 //		} catch (Exception e) {
 //			return "Git not saved. ERROR: " + e.getMessage();
@@ -259,7 +259,7 @@ public class GitRepositoryImpl implements GitRepository {
 	public List<Path> commitContent(String commitName) {
 		Commit commit = commits.get(commitName);
 		if (commit != null) {
-			return commit.getContent().keySet().stream().toList();
+			return commit.getContent().keySet().stream().map(el -> Path.of(el)).toList();
 		} else {
 			return new LinkedList<>();
 		}
@@ -280,16 +280,16 @@ public class GitRepositoryImpl implements GitRepository {
 			return "No such branch or commit";
 		}
 		diff = infoDiff();
-		diff.get(FileStates.UNTRACKED).forEach(el -> {
+		diff.getOrDefault(FileStates.UNTRACKED, new LinkedList<>()).forEach(el -> {
 			try {
 				Files.delete(el.getName());
 			} catch (IOException e) {
 				throw new RuntimeException("Cannot delete file");
 			}
 		});
-		diff.get(FileStates.MODIFIED).forEach(el -> {
+		diff.getOrDefault(FileStates.MODIFIED, new LinkedList<>()).forEach(el -> {
 			try {
-				Files.write(el.getName(), getCommitFromHead().getContent().get(el.getName()));
+				Files.write(el.getName(), getCommitFromHead().getContent().get(el.getName().toString()));
 			} catch (IOException e) {
 				throw new RuntimeException("Cannot rewrite file");
 			}
@@ -299,10 +299,10 @@ public class GitRepositoryImpl implements GitRepository {
 		return "Switching finished successfully";
 	}
 
-	private Object createIfAbsent(Path path) {
-		if (!Files.exists(path)) {
+	private Object createIfAbsent(String path) {
+		if (!Files.exists(Path.of(path))) {
 			try {
-				Files.write(path, getCommitFromHead().getContent().get(path));
+				Files.write(Path.of(path), getCommitFromHead().getContent().get(path));
 			} catch (IOException e) {
 				throw new RuntimeException("Cannot write file");
 			}

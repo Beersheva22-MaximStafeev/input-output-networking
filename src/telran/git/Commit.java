@@ -2,6 +2,7 @@ package telran.git;
 
 import java.io.Serializable;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -13,7 +14,7 @@ public class Commit implements Serializable {
 	private final String id;
 	private final Commit previous;
 	private final String message;
-	private final HashMap<Path, byte[]> content;
+	private final HashMap<String, byte[]> content;
 	
 	public Commit(Commit previous, String message, List<FileState> content) {
 		this.id = getUniqueString();
@@ -21,7 +22,7 @@ public class Commit implements Serializable {
 		this.message = message;
 		// TO DO Commit : Commit
 		this.content = new HashMap<>();
-		content.forEach(el -> this.content.put(el.getName(), getByteContent(el.state, previous, el.name)));
+		content.forEach(el -> this.content.put(el.getName().toString(), getByteContent(el.state, previous, el.name)));
 	}
 	
 	private byte[] getByteContent(FileStates state, Commit previous, Path name) {
@@ -31,7 +32,7 @@ public class Commit implements Serializable {
 		if (state != FileStates.STAGED) {
 			return GitRepositoryImpl.getFileContent(name);
 		} else {
-			return previous.getContent().get(name);
+			return previous.getContent().get(name.toString());
 		}
 		// TO DO Auto-generated method stub
 //		return null;
@@ -59,13 +60,13 @@ public class Commit implements Serializable {
 		return message;
 	}
 	
-	public HashMap<Path, byte[]> getContent() {
+	public HashMap<String, byte[]> getContent() {
 		return content;
 	}
 
 	public FileStates getDifference(Path path, byte[] fileContent) {
-		if (content.containsKey(path)) {
-			return content.get(path).equals(fileContent) ? FileStates.STAGED : FileStates.MODIFIED;
+		if (content.containsKey(path.toString())) {
+			return Arrays.equals(content.get(path.toString()), fileContent) ? FileStates.STAGED : FileStates.MODIFIED;
 		} else {
 			return FileStates.UNTRACKED;
 		}

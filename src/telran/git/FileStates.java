@@ -1,5 +1,5 @@
 package telran.git;
 
 public enum FileStates {
-	STAGED, UNTRACKED, MODIFIED; 
+	STAGED, UNTRACKED, MODIFIED, DELETED; 
 }
