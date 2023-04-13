@@ -38,7 +38,6 @@ public class GitRepositoryAppl {
 						Item.of("getHead", GitRepositoryAppl::getHead),
 						Item.exit()
 						),
-				Item.of("save && exit", GitRepositoryAppl::save, true),
 				Item.exit()
 				);
 				

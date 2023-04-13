@@ -20,6 +20,16 @@ public class GitRepositoryImplTest {
 	}
 	
 	@Test
+	void testPath2() {
+		String path = "..\\.\\";
+//		System.out.println(Path.of(path).toAbsolutePath().normalize());
+//		System.out.println(Path.of(path).toAbsolutePath().normalize().resolve(".mygit"));
+		Path mygit = Path.of(path).toAbsolutePath().normalize().resolve(".mygit");
+		System.out.println(mygit.getParent());
+		System.out.println(mygit);
+	}
+	
+	@Test
 	void testRegexp() {
 		assertEquals(true, Pattern.matches(".mygit", "amygit"));
 		assertEquals(true, Pattern.matches(".mygit", ".mygit"));

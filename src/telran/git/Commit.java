@@ -20,9 +20,11 @@ public class Commit implements Serializable {
 		this.id = getUniqueString();
 		this.previous = previous;
 		this.message = message;
-		// TO DO Commit : Commit
 		this.content = new HashMap<>();
-		content.forEach(el -> this.content.put(el.getName().toString(), getByteContent(el.state, previous, el.name)));
+		content.forEach(el -> {
+			if (el.getState() != FileStates.DELETED)
+				this.content.put(el.getName().toString(), getByteContent(el.state, previous, el.name));
+		});
 	}
 	
 	private byte[] getByteContent(FileStates state, Commit previous, Path name) {
@@ -34,8 +36,6 @@ public class Commit implements Serializable {
 		} else {
 			return previous.getContent().get(name.toString());
 		}
-		// TO DO Auto-generated method stub
-//		return null;
 	}
 
 	private String getUniqueString() {
