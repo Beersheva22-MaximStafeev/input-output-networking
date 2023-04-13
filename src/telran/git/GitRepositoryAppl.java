@@ -52,10 +52,6 @@ public class GitRepositoryAppl {
 		io.writeLine(git.getHead());
 	}
 	
-	private static void save(InputOutput io) {
-		git.save();
-	}
-	
 	private static void commitContent(InputOutput io) {
 		String commitName = io.readStringPredicate("Enter commit name", "Enter not emply commit name", el -> el.length() > 0);
 		git.commitContent(commitName).forEach(el -> io.writeLine(el));
