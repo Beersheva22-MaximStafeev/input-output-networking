@@ -33,7 +33,7 @@ public class Commit implements Serializable {
 		return new File(
 				el.getName().toString(),
 				File.getLastMofifiyed(el.getName()),
-				getByteContent(el.state, previous, el.name));
+				getByteContent(el.getState(), previous, el.getName()));
 	}
 
 
