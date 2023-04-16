@@ -26,7 +26,9 @@ public class TcpServer implements Runnable {
 				Socket socket = serverSocket.accept();
 				System.out.println("Client connected");
 				TcpServerClient serverClient = new TcpServerClient(socket, protocol);
-				serverClient.run();
+//				serverClient.run();
+				Thread thread = new Thread(serverClient);
+				thread.start();
 			} catch (Exception e) {
 				System.out.println(e.toString());
 				System.out.println("Client disconnected");
