@@ -11,8 +11,8 @@ import java.nio.file.Path;
  *
  */
 public class FileState {
-	Path name;
-	FileStates state;
+	private Path name;
+	private FileStates state;
 	
 	public FileState(Path name, FileStates state) {
 		this.name = name;

@@ -1,8 +1,9 @@
 package telran.git;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -14,7 +15,7 @@ public class Commit implements Serializable {
 	private final String id;
 	private final Commit previous;
 	private final String message;
-	private final HashMap<String, byte[]> content;
+	private final HashMap<String, File> content;
 	
 	public Commit(Commit previous, String message, List<FileState> content) {
 		this.id = getUniqueString();
@@ -23,18 +24,28 @@ public class Commit implements Serializable {
 		this.content = new HashMap<>();
 		content.forEach(el -> {
 			if (el.getState() != FileStates.DELETED)
-				this.content.put(el.getName().toString(), getByteContent(el.state, previous, el.name));
+				this.content.put(el.getName().toString(), getFile(el, previous));
 		});
 	}
 	
+
+	private File getFile(FileState el, Commit previous) {
+		return new File(
+				el.getName().toString(),
+				File.getLastMofifiyed(el.getName()),
+				getByteContent(el.state, previous, el.name));
+	}
+
+
+
 	private byte[] getByteContent(FileStates state, Commit previous, Path name) {
 		if (previous == null) {
-			return GitRepositoryImpl.getFileContent(name);
+			return getFileContent(name);
 		}
 		if (state != FileStates.STAGED) {
-			return GitRepositoryImpl.getFileContent(name);
+			return getFileContent(name);
 		} else {
-			return previous.getContent().get(name.toString());
+			return previous.getContent().get(name.toString()).getContent();
 		}
 	}
 
@@ -60,15 +71,24 @@ public class Commit implements Serializable {
 		return message;
 	}
 	
-	public HashMap<String, byte[]> getContent() {
+	public HashMap<String, File> getContent() {
 		return content;
 	}
 
-	public FileStates getDifference(Path path, byte[] fileContent) {
+	public FileStates getDifference(Path path) {
 		if (content.containsKey(path.toString())) {
-			return Arrays.equals(content.get(path.toString()), fileContent) ? FileStates.STAGED : FileStates.MODIFIED;
+			return content.get(path.toString()).getFileModifiyed().equals(File.getLastMofifiyed(path)) ? 
+					FileStates.STAGED : FileStates.MODIFIED;
 		} else {
 			return FileStates.UNTRACKED;
+		}
+	}
+	
+	protected static byte[] getFileContent(Path path) {
+		try {
+			return Files.readAllBytes(path);
+		} catch (IOException e) {
+			return new byte[0];
 		}
 	}
 

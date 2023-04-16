@@ -151,13 +151,15 @@ public class GitRepositoryImpl implements GitRepository {
 					new FileState(path, 
 							commit == null ? 
 									FileStates.UNTRACKED : 
-									commit.getDifference(path, getFileContent(path))))
+									commit.getDifference(path)))
 				.collect(Collectors.groupingBy(FileState::getState));
-		commit.getContent().forEach((k, v) -> {
-					if (!Files.exists(Path.of(k))) {
-						res.computeIfAbsent(FileStates.DELETED, (kk) -> new LinkedList<>()).add(new FileState(Path.of(k), FileStates.DELETED));
-					}
-				});
+		if (commit != null) {
+			commit.getContent().forEach((k, v) -> {
+						if (!Files.exists(Path.of(k))) {
+							res.computeIfAbsent(FileStates.DELETED, (kk) -> new LinkedList<>()).add(new FileState(Path.of(k), FileStates.DELETED));
+						}
+					});
+		}
 		return res;
 	}
 
@@ -174,14 +176,6 @@ public class GitRepositoryImpl implements GitRepository {
 
 	private boolean fileNotIgnored(Path path) {
 		return ignoredFileNameExp.stream().noneMatch(regex -> Pattern.matches(regex, path.getFileName().toString()));
-	}
-
-	protected static byte[] getFileContent(Path path) {
-		try {
-			return Files.readAllBytes(path);
-		} catch (IOException e) {
-			return new byte[0];
-		}
 	}
 
 	@Override
@@ -282,7 +276,8 @@ public class GitRepositoryImpl implements GitRepository {
 		});
 		diff.getOrDefault(FileStates.MODIFIED, new LinkedList<>()).forEach(el -> {
 			try {
-				Files.write(el.getName(), getCommitFromHead().getContent().get(el.getName().toString()));
+				File file = getCommitFromHead().getContent().get(el.getName().toString());
+				file.rewrite();
 			} catch (IOException e) {
 				throw new RuntimeException(SWITCH_ERROR_CANNOT_REWRITE);
 			}
@@ -290,7 +285,8 @@ public class GitRepositoryImpl implements GitRepository {
 		diff.getOrDefault(FileStates.DELETED, new LinkedList<>()).forEach(el -> {
 			try {
 				Files.createDirectories(el.getName().getParent());
-				Files.write(el.getName(), getCommitFromHead().getContent().get(el.getName().toString()));
+				File file = getCommitFromHead().getContent().get(el.getName().toString());
+				file.rewrite();
 			} catch (IOException e) {
 				throw new RuntimeException(SWITCH_ERROR_CANNOT_REWRITE);
 			}
