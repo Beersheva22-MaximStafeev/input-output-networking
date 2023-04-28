@@ -1,10 +1,14 @@
-package telran.net;
+package telran.employees.net;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import telran.employees.*;
+import telran.net.Protocol;
+import telran.net.Request;
+import telran.net.Response;
+import telran.net.ResponseCode;
 
 @SuppressWarnings("unused")
 public class CompanyProtocol implements Protocol {
@@ -68,6 +72,13 @@ public class CompanyProtocol implements Protocol {
 
 	private Serializable addEmployee(Serializable data) {
 		return company.addEmployee((Employee) data);
+	}
+	
+	private Serializable updateDepartment(Serializable data) {
+		@SuppressWarnings("unchecked")
+		PairId<String> idDepartment = (PairId<String>) data;
+		company.updateDepartment(idDepartment.id(), idDepartment.value());
+		return "";
 	}
 
 }

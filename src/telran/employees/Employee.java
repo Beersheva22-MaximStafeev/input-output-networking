@@ -64,4 +64,11 @@ public class Employee implements Serializable {
 		return String.format("Id: %s, Name: %s, BirthDate: %s, Department: %s, Salary: %s", getId(), getName(), getBirthDate(), getDepartment(), getSalary());
 	}
 	
+	public void setSalary(int salary) {
+		this.salary = salary;
+	}
+	
+	public void setDepartment(String department) {
+		this.department = department;
+	}
 }

@@ -69,5 +69,15 @@ public abstract class CompanyNetImplAbstract implements Company {
 	public void restore(String pathName) {
 		networkClient.send("restore", pathName);		
 	}
+	
+	@Override
+	public void updateSalary(long id, int newSalary) {
+		networkClient.send("newSalary", id);
+	}
+
+	@Override
+	public void updateDepartment(long id, String department) {
+		networkClient.send("updateDepartment", department);
+	}
 
 }

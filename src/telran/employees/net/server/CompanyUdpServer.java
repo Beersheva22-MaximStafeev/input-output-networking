@@ -3,7 +3,7 @@ package telran.employees.net.server;
 import java.io.IOException;
 
 import telran.employees.CompanyImpl;
-import telran.net.CompanyProtocol;
+import telran.employees.net.CompanyProtocol;
 import telran.net.UdpServer;
 
 public class CompanyUdpServer {

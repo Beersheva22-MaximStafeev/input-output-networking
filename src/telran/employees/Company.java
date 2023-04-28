@@ -64,4 +64,18 @@ public interface Company extends Iterable<Employee>, Serializable {
 	 * @param pathName
 	 */
 	void restore(String pathName);
+	
+	/**
+	 * update salary
+	 * @param emplId
+	 * @param newSalary
+	 */
+	void updateSalary(long id, int newSalary);
+	
+	/**
+	 * update department
+	 * @param empId
+	 * @param department
+	 */
+	void updateDepartment(long id, String department);
 }

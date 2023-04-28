@@ -77,4 +77,20 @@ public class CompanyImplSimple implements Company {
 		}
 	}
 
+	@Override
+	public void updateSalary(long id, int newSalary) {
+		Employee employee = map.get(id);
+		if (employee != null) {
+			employee.setSalary(newSalary);
+		}
+	}
+
+	@Override
+	public void updateDepartment(long id, String department) {
+		Employee employee = map.get(id);
+		if (employee != null) {
+			employee.setDepartment(department);
+		}
+	}
+
 }
